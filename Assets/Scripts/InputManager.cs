@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
@@ -6,6 +7,7 @@ public class InputManager : MonoBehaviour
     private TouchControls touchControls;
     private CreateScene createScene;
     private bool flag;
+    private bool flag2;
     private float speed = 10f;
 
     private void Awake()
@@ -25,6 +27,11 @@ public class InputManager : MonoBehaviour
     {
         if (flag)
         {
+            if (IsTouchingUI())
+            {
+                return;
+            }
+
             createScene.starSparrows[SelectObj.index].transform.RotateAround(createScene.starSparrows[SelectObj.index].transform.position,
                 Vector3.up, speed * Time.deltaTime);
         }
@@ -50,5 +57,18 @@ public class InputManager : MonoBehaviour
     private void OnDisable()
     {
         touchControls.Disable();
+    }
+
+    private bool IsTouchingUI()
+    {
+        foreach (var touch in Input.touches)
+        {
+            if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
